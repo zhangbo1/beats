@@ -1008,12 +1008,17 @@ func (thrift *Thrift) receivedReply(msg *ThriftMessage) {
 		logp.Debug("thrift", "Response from unknown transaction. Ignoring: %v", tuple)
 		return
 	}
-
-	if trans.Request.Method != msg.Method {
+         
+         //resolve bug:  Response from another request received 'serviceName:serviceMethodName' 'serviceMethodName'. Ignoring.
+         if strings.Index(trans.Request.Method, ":") != -1 {
+         	//TODO
+         }else{
+		if trans.Request.Method != msg.Method {
 		logp.Debug("thrift", "Response from another request received '%s' '%s'"+
 			". Ignoring.", trans.Request.Method, msg.Method)
 		return
-	}
+		}
+        }
 
 	trans.Reply = msg
 	trans.BytesOut = uint64(msg.FrameSize)
